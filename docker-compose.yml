@@ -5,10 +5,51 @@ services:
     container_name: nginx-proxy
     ports:
       - "80:80"
+    networks:
+      - nginx-proxy
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  whoami:
-    image: jwilder/whoami
+  elasticsearch:
+    hostname: elasticsearch.magento2.docker
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
+    ports:
+      - 9200:9200
+    volumes_from:
+      - esdata
     environment:
-      - VIRTUAL_HOST=whoami.local
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - esnet
+      - nginx-proxy
+
+  eskibana:
+    hostname: eskibana.magento2.docker
+    image: docker.elastic.co/kibana/kibana:5.2.1
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch
+    environment:
+      SERVER_NAME: eskibana
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    networks:
+      - esnet
+
+  esdata:
+    image: tianon/true
+    volumes:
+     - ./persistent/elasticsearch:/usr/share/elasticsearch/data
+
+networks:
+  esnet:
+  nginx-proxy:
+    external:
+      name: nginx-proxy
