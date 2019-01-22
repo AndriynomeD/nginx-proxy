@@ -44,7 +44,7 @@ Add next to `/etc/hosts` file:
 127.0.0.1 eskibana
 ```
 
-Make directory `persistent` inside root directory
+Make directory `persistent/elasticsearch` inside root directory
 
 To run it:
 
