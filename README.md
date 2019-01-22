@@ -19,7 +19,7 @@ Include next containers:
 
 ### Some docker command info
 
-Fo use docker/docker-compose without sudo:
+For use docker/docker-compose without sudo (need relogin into system):
 
     $ sudo usermod -aG docker {{user}}
 
