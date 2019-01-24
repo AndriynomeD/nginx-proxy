@@ -5,12 +5,27 @@ services:
     container_name: nginx-proxy
     ports:
       - "80:80"
-    networks:
-      - nginx-proxy
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - nginx-proxy
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOSTS: instance_db_1,instance_db_2
+      PMA_PORTS: 3306,3306
+    external_links:
+      - instance_db_1
+      - instance_db_2
+    networks:
+      - databases
+
 
   elasticsearch:
+    container_name: elasticsearch
     hostname: elasticsearch.magento2.docker
     image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
     ports:
@@ -27,8 +42,7 @@ services:
         soft: -1
         hard: -1
     networks:
-      - esnet
-      - nginx-proxy
+      - elastic-net
 
   eskibana:
     hostname: eskibana.magento2.docker
@@ -41,7 +55,7 @@ services:
       SERVER_NAME: eskibana
       ELASTICSEARCH_URL: http://elasticsearch:9200
     networks:
-      - esnet
+      - elastic-net
 
   esdata:
     image: tianon/true
@@ -49,7 +63,9 @@ services:
      - ./persistent/elasticsearch:/usr/share/elasticsearch/data
 
 networks:
-  esnet:
+  elastic-net:
+    external: true
   nginx-proxy:
-    external:
-      name: nginx-proxy
+    external: true
+  databases:
+    external: true
