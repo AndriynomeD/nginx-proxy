@@ -55,6 +55,11 @@ If get kibana error try on host machine:
 
     $ sudo sysctl -w vm.max_map_count=262144
 
+Persistent solution:
+
+    $ sudo gedit /etc/sysctl.conf
+    Add 'vm.max_map_count=262144' into file & save it.
+    
 Then start any containers you want proxied with an env var `VIRTUAL_HOST=subdomain.youdomain.com`
 
 In docker-compose.yml file edit phpMyAdmin config if need add additional db:
@@ -115,8 +120,8 @@ File docker-compose-min.yml contain config without varnish & cron (you als can c
 
 ### Problem
 
-Some time docker return 'random' ip then varnish ask for 'web' container ip - because all varnish & web container grouped in nginx-proxy network docker not clear know what exactly 'web' container want specific 'varnish' container.
-
+1. Some time docker return 'random' ip then varnish ask for 'web' container ip - because all varnish & web container grouped in nginx-proxy network docker not clear know what exactly 'web' container want specific 'varnish' container.
+2. phpMyAdmin can't use foreign key link for go to another table.
   [1]: https://github.com/jwilder/docker-gen
   [2]: http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/
   [origin-repo]: https://github.com/jwilder/nginx-proxy
