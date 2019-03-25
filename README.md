@@ -51,6 +51,10 @@ To run it:
 
     $ docker-compose up
     
+For silent run:
+
+    $ docker-compose up -d
+    
 If get kibana error try on host machine:
 
     $ sudo sysctl -w vm.max_map_count=262144
@@ -122,6 +126,11 @@ File docker-compose-min.yml contain config without varnish & cron (you als can c
 
 1. Some time docker return 'random' ip then varnish ask for 'web' container ip - because all varnish & web container grouped in nginx-proxy network docker not clear know what exactly 'web' container want specific 'varnish' container.
 2. phpMyAdmin can't use foreign key link for go to another table.
+3. Command `docker-compose run cli bash` create new cli-container each time. Solution: delete container not used longer that a week:
+```
+    $ docker ps --filter "status=exited" | grep 'weeks ago' | awk '{print $1}' | xargs --no-run-if-empty docker rm
+```
+
   [1]: https://github.com/jwilder/docker-gen
   [2]: http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/
   [origin-repo]: https://github.com/jwilder/nginx-proxy
