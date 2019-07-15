@@ -128,7 +128,7 @@ File docker-compose-min.yml contain config without varnish & cron (you als can c
 2. phpMyAdmin can't use foreign key link for go to another table.
 3. Command `docker-compose run cli bash` create new cli-container each time. Solution: delete container not used longer that a week:
 ```
-    $ docker ps --filter "status=exited" | grep 'weeks ago' | awk '{print $1}' | xargs --no-run-if-empty docker rm
+    $ docker ps --filter "status=exited" | grep -E "Exited .*week[s]? ago" | awk '$2 != "tianon/true" {print $1}' | xargs --no-run-if-empty docker rm
 ```
 
   [1]: https://github.com/jwilder/docker-gen
