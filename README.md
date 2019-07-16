@@ -51,17 +51,17 @@ Add next to `/etc/hosts` file:
 Make directory `persistent/elasticsearch` inside root directory
 
 To run it:
-
+```shell
     $ docker-compose up
-    
+```
 For silent run:
-
+```shell
     $ docker-compose up -d
-    
+```
 If get kibana error try on host machine:
-
+```shell
     $ sudo sysctl -w vm.max_map_count=262144
-
+```
 Persistent solution:
 
     $ sudo gedit /etc/sysctl.conf
@@ -107,8 +107,8 @@ After:
 
 For use in Magento Elasticsearch engine:
 1) Add elasticsearch package by composer:
-```
-    $ docker-compose run cli bash
+```shell
+    $ docker-compose run --rm cli bash
     $ cd /var/www/magento/
     $ composer require "elasticsearch/elasticsearch:~5.1"
     $ sudo -uwww-data php bin/magento setup:upgrade
