@@ -11,6 +11,7 @@ services:
       - nginx-proxy
 
   phpmyadmin:
+    container_name: phpmyadmin
     image: phpmyadmin/phpmyadmin
     ports:
       - 8080:80
@@ -26,8 +27,9 @@ services:
 
   elasticsearch:
     container_name: elasticsearch
-    hostname: elasticsearch.magento2.docker
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
+    hostname: elasticsearch.docker
+    build:
+      context: elasticsearch/
     ports:
       - 9200:9200
     volumes_from:
@@ -45,7 +47,8 @@ services:
       - elastic-net
 
   eskibana:
-    hostname: eskibana.magento2.docker
+    container_name: eskibana
+    hostname: eskibana.docker
     image: docker.elastic.co/kibana/kibana:5.2.1
     ports:
       - 5601:5601

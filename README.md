@@ -64,7 +64,7 @@ Persistent solution:
     $ sudo gedit /etc/sysctl.conf
     Add 'vm.max_map_count=262144' into file & save it.
     
-Then start any containers you want proxied with an env var `VIRTUAL_HOST=subdomain.youdomain.com`
+Then start any containers you want proxied with a env var `VIRTUAL_HOST=subdomain.youdomain.com`
 
 In docker-compose.yml file edit phpMyAdmin config if need add additional db:
 1. Check full name of docker container you want to add
@@ -102,11 +102,19 @@ After:
       - databases
 ```
 
-For use in Magento Elasticsearch engine change next config values:
-1. Search Engine: Elasticsearch 5.0+
-2. Elasticsearch Server Hostnam: elasticsearch
-3. Elasticsearch Server Port: 9200
-4. Elasticsearch Index Prefix - must be unique
+For use in Magento Elasticsearch engine:
+1) Add elasticsearch package by composer:
+```
+    $ docker-compose run cli bash
+    $ cd /var/www/magento/
+    $ composer require "elasticsearch/elasticsearch:~5.1"
+    $ sudo -uwww-data php bin/magento setup:upgrade
+```
+2) change next config values:
+    1. Search Engine: Elasticsearch 5.0+
+    2. Elasticsearch Server Hostname: elasticsearch
+    3. Elasticsearch Server Port: 9200
+    4. Elasticsearch Index Prefix - must be unique
 
 ### Access to Elasticsearch, Kibana, phpMyAdmin
 
@@ -120,7 +128,7 @@ If your container exposes multiple ports, nginx-proxy will default to the servic
 
 ### Minimized config
 
-File docker-compose-min.yml contain config without varnish & cron (you als can commented unneaded)
+File docker-compose-min.yml contain config without varnish & cron (you also can commented unneeded)
 
 ### Problem
 
