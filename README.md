@@ -126,18 +126,17 @@ http://phpmyadmin:8080
 
 If your container exposes multiple ports, nginx-proxy will default to the service running on port 80.  If you need to specify a different port, you can set a VIRTUAL_PORT env var to select a different one.  If your container only exposes one port and it has a VIRTUAL_HOST env var set, that port will be selected.
 
-### Minimized config
+### Maybe useful
 
-File docker-compose-min.yml contain config without varnish & cron (you also can commented unneeded)
+1. Delete container not used longer that a week:
+```
+    $ docker ps --filter "status=exited" | grep -E "Exited .*week[s]? ago" | awk '$2 != "tianon/true" {print $1}' | xargs --no-run-if-empty docker rm
+```
 
 ### Problem
 
 1. Some time docker return 'random' ip then varnish ask for 'web' container ip - because all varnish & web container grouped in nginx-proxy network docker not clear know what exactly 'web' container want specific 'varnish' container.
 2. phpMyAdmin can't use foreign key link for go to another table.
-3. Command `docker-compose run cli bash` create new cli-container each time. Solution: delete container not used longer that a week:
-```
-    $ docker ps --filter "status=exited" | grep -E "Exited .*week[s]? ago" | awk '$2 != "tianon/true" {print $1}' | xargs --no-run-if-empty docker rm
-```
 
   [1]: https://github.com/jwilder/docker-gen
   [2]: http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/
