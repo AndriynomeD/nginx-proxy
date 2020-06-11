@@ -7,6 +7,7 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./etc/nginx/my_proxy.conf:/etc/nginx/conf.d/my_proxy.conf
     networks:
       - nginx-proxy
 
@@ -35,6 +36,7 @@ services:
     volumes_from:
       - esdata
     environment:
+      - discovery.type=single-node
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - xpack.security.enabled=false
@@ -49,7 +51,7 @@ services:
   eskibana:
     container_name: eskibana
     hostname: eskibana.docker
-    image: docker.elastic.co/kibana/kibana:5.2.1
+    image: docker.elastic.co/kibana/kibana:7.7.1
     ports:
       - 5601:5601
     links:
