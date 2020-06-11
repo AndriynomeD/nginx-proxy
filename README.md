@@ -11,8 +11,8 @@ This repo is fork of [jwilder/nginx-proxy][origin-repo] so you need read origin 
 
 Include next containers:
 1. jwilder/nginx-proxy
-2. docker.elastic.co/elasticsearch/elasticsearch:5.2.1 - for shared access from multiple magento instances (need use different "Elasticsearch Index Prefix" in each instance)
-3. docker.elastic.co/kibana/kibana:5.2.1 - data visualization plugin for Elasticsearch
+2. docker.elastic.co/elasticsearch/elasticsearch:7.7.1 - for shared access from multiple magento instances (need use different "Elasticsearch Index Prefix" in each instance)
+3. docker.elastic.co/kibana/kibana:7.7.1 - data visualization plugin for Elasticsearch
 4. phpmyadmin/phpmyadmin - manage databases
 
 ### Some docker command info
@@ -102,16 +102,16 @@ After:
       - databases
 ```
 
-For use in Magento Elasticsearch engine:
-1) Add elasticsearch package by composer:
+For use in Magento Elasticsearch engine:  
+1) ~~Add elasticsearch package by composer~~ (not actual need for newest Magento versions):
 ```shell
     $ docker-compose run --rm cli bash
     $ cd /var/www/magento/
-    $ composer require "elasticsearch/elasticsearch:~5.1"
+    $ composer require "elasticsearch/elasticsearch:~7.7"
     $ sudo -uwww-data php bin/magento setup:upgrade
 ```
 2) change next config values:
-    1. Search Engine: Elasticsearch 5.0+
+    1. Search Engine: Elasticsearch 7.0+
     2. Elasticsearch Server Hostname: elasticsearch
     3. Elasticsearch Server Port: 9200
     4. Elasticsearch Index Prefix - must be unique
