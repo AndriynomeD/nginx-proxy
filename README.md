@@ -118,9 +118,9 @@ For use in Magento Elasticsearch engine:
 
 ### Access to Elasticsearch, Kibana, phpMyAdmin
 
-http://elasticsearch:9200
-http://eskibana:5601
-http://phpmyadmin:8080
+http://elasticsearch:9200  
+http://eskibana:5601  
+http://phpmyadmin:8080  
 
 ### Multiple Ports
 
