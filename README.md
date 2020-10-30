@@ -19,7 +19,7 @@ Include next containers:
 
 For use docker/docker-compose without sudo (need relogin into system):
 
-    $ sudo usermod -aG docker {{user}}
+    $ sudo usermod -aG docker ${USER}
 
 Delete docker network:
 
