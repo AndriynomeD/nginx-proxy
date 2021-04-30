@@ -5,9 +5,11 @@ services:
     container_name: nginx-proxy
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./etc/nginx/my_proxy.conf:/etc/nginx/conf.d/my_proxy.conf
+      - ./etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
+      - ./etc/nginx/certs:/etc/nginx/certs
     networks:
       - nginx-proxy
 
@@ -25,12 +27,11 @@ services:
     networks:
       - databases
 
-
   elasticsearch:
     container_name: elasticsearch
     hostname: elasticsearch.docker
     build:
-      context: elasticsearch/
+      context: elasticsearch7/
     ports:
       - 9200:9200
     volumes_from:
@@ -40,7 +41,7 @@ services:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms1012m -Xmx1012m"
     ulimits:
       memlock:
         soft: -1
@@ -48,24 +49,24 @@ services:
     networks:
       - elastic-net
 
-  eskibana:
-    container_name: eskibana
-    hostname: eskibana.docker
-    image: docker.elastic.co/kibana/kibana:7.7.1
-    ports:
-      - 5601:5601
-    links:
-      - elasticsearch
-    environment:
-      SERVER_NAME: eskibana
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-    networks:
-      - elastic-net
-
   esdata:
     image: tianon/true
     volumes:
-     - ./persistent/elasticsearch:/usr/share/elasticsearch/data
+     - ./persistent/elasticsearch7:/usr/share/elasticsearch/data
+
+#  eskibana:
+#    container_name: eskibana
+#    hostname: eskibana.docker
+#    image: docker.elastic.co/kibana/kibana:7.7.1
+#    ports:
+#      - 5601:5601
+#    links:
+#      - elasticsearch
+#    environment:
+#      SERVER_NAME: eskibana
+#      ELASTICSEARCH_URL: http://elasticsearch:9200
+#    networks:
+#      - elastic-net
 
 networks:
   elastic-net:

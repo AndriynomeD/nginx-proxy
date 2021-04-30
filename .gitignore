@@ -1,4 +1,9 @@
 **/__pycache__/
 **/.cache/
 .idea/
-/persistent
+/persistent/elasticsearch5/*
+!/persistent/elasticsearch5/.gitkeep
+/persistent/elasticsearch6/*
+!/persistent/elasticsearch6/.gitkeep
+/persistent/elasticsearch7/*
+!/persistent/elasticsearch7/.gitkeep
