@@ -64,6 +64,12 @@ Include next containers:
     ```shell
         $ docker-compose up -d
     ```
+   P.S. If something went wrong try 1-6 step & force recreate containers:
+   ```shell
+        $ docker-compose up --build --force-recreate
+        Ctrl+C
+        $ docker-compose up -d
+    ```
 
 ### Else
 Then start any containers you want proxied with an env var `VIRTUAL_HOST=subdomain.youdomain.com`
