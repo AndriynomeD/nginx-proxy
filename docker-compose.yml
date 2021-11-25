@@ -24,6 +24,8 @@ services:
     external_links:
       - instance_db_1
       - instance_db_2
+    volumes:
+      - ./etc/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
     networks:
       - databases
 
