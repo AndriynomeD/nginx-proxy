@@ -1,6 +1,7 @@
 **/__pycache__/
 **/.cache/
 .idea/
+docker-compose.yml
 /etc/nginx/certs/*
 !/etc/nginx/certs/.gitkeep
 /persistent/elasticsearch5/*
