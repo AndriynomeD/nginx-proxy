@@ -21,15 +21,16 @@ Include next containers:
 2. Add user into group docker & www-data
     1. Run commands:
     ```shell
-        $ sudo usermod -aG docker ${USER}
-        $ sudo usermod -aG www-data ${USER}
+        sudo usermod -aG docker ${USER}
+        sudo usermod -aG www-data ${USER}
     ```
     2. Restart system
 3. Create docker external network (nginx-proxy - grouped container for reverse nginx, elastic-net - for share elasticsearch, databases - grouped db for phpmyadmin):
     ```shell
-        $ docker network create nginx-proxy
-        $ docker network create elastic-net
-        $ docker network create databases
+        docker network create nginx-proxy
+        docker network create elastic-net
+        docker network create search-engine-net
+        docker network create databases
     ```
 4. Add share docker service to `/etc/hosts` file:
     ```
@@ -42,33 +43,30 @@ Include next containers:
     - elasticsearch6 - 6.8.15
     - elasticsearch7 - 7.7.1
    ```dockerfile
-   elasticsearch:
-    container_name: elasticsearch
-    hostname: elasticsearch.docker
-    build:
-        context: <elasticsearch-verion>/   (example `context: elasticsearch7/`)
-    ......
-    esdata:
-        image: tianon/true
-        volumes:
-            - ./persistent/<elasticsearch-verion>:/usr/share/elasticsearch/data
+       elasticsearch:
+           container_name: elasticsearch
+           hostname: elasticsearch.docker
+           build:
+               context: <elasticsearch-verion>/   (example `context: elasticsearch7/`)
+           volumes:
+               - ./persistent/<elasticsearch-verion>:/usr/share/elasticsearch/data
     ```
 
 6. Update java param for elasticsearch
     ```shell
-    $ sudo gedit /etc/sysctl.conf
+    sudo gedit /etc/sysctl.conf
     ```
     Add 'vm.max_map_count=262144' into file & save it.
 
 7. Up docker containers:
     ```shell
-        $ docker-compose up -d
+        docker-compose up -d
     ```
    P.S. If something went wrong try 1-6 step & force recreate containers:
    ```shell
-        $ docker-compose up --build --force-recreate
+        docker-compose up --build --force-recreate
         Ctrl+C
-        $ docker-compose up -d
+        docker-compose up -d
     ```
 
 ### Else
@@ -77,10 +75,10 @@ Then start any containers you want proxied with an env var `VIRTUAL_HOST=subdoma
 In docker-compose.yml file edit phpMyAdmin config if need add additional db:
 1. Check full name of docker container you want to add
 
-    $ docker network ls
+    docker network ls
 
 2. Add container full name to phpMyAdmin config (example we already have instance_db_1 and add instance_db_2 to config):
-```
+```dockerfile
  phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
@@ -110,14 +108,14 @@ If your container only exposes one port and it has a VIRTUAL_HOST env var set, t
 ### Maybe useful
 
 1. Delete container not used longer that a week:
-```
-    $ docker ps --filter "status=exited" | grep -E "Exited .*week[s]? ago" | awk '$2 != "tianon/true" {print $1}' | xargs --no-run-if-empty docker rm
+```shell
+    docker ps --filter "status=exited" | grep -E "Exited .*week[s]? ago" | awk '$2 != "tianon/true" {print $1}' | xargs --no-run-if-empty docker rm
 ```
 
 ### Problem
 
 1. Some time docker return 'random' ip then varnish ask for 'web' container ip - because all varnish & web container grouped in nginx-proxy network docker not clear know what exactly 'web' container want specific 'varnish' container.
 
-  [1]: https://github.com/jwilder/docker-gen
+  [1]: https://github.com/nginx-proxy/docker-gen
   [2]: http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/
-  [origin-repo]: https://github.com/jwilder/nginx-proxy
+  [origin-repo]: https://github.com/nginx-proxy/nginx-proxy

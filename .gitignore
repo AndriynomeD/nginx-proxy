@@ -1,9 +1,13 @@
 **/__pycache__/
 **/.cache/
 .idea/
+/etc/nginx/certs/*
+!/etc/nginx/certs/.gitkeep
 /persistent/elasticsearch5/*
 !/persistent/elasticsearch5/.gitkeep
 /persistent/elasticsearch6/*
 !/persistent/elasticsearch6/.gitkeep
 /persistent/elasticsearch7/*
 !/persistent/elasticsearch7/.gitkeep
+/persistent/opensearch2/*
+!/persistent/opensearch2/.gitkeep

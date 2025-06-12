@@ -1,0 +1,123 @@
+version: '2'
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
+      - ./etc/nginx/certs:/etc/nginx/certs
+    networks:
+      - nginx-proxy
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOSTS: instance1.db,instance_db_2
+    external_links:
+      - instance_db_1:instance1.db
+      - instance_db_2
+    volumes:
+      - ./containers/phpmyadmin/etc/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+    networks:
+      - databases
+
+  elasticsearch:
+    container_name: elasticsearch
+    hostname: elasticsearch.docker
+    build:
+      context: containers/elasticsearch7/
+#    logging:
+#      driver: none # json-file|none|...
+    ports:
+      - 9200:9200
+    volumes:
+      - ./persistent/elasticsearch7:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1012m -Xmx1012m -Dlog4j2.formatMsgNoLookups=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elastic-net
+      - search-engine-net
+
+#  eskibana:
+#    container_name: eskibana
+#    hostname: eskibana.docker
+#    image: docker.elastic.co/kibana/kibana:7.7.1
+#    ports:
+#      - 5601:5601
+#    links:
+#      - elasticsearch
+#    environment:
+#      SERVER_NAME: eskibana
+#      ELASTICSEARCH_URL: http://elasticsearch:9200
+#    networks:
+#      - elastic-net
+#      - search-engine-net
+
+  opensearch:
+    container_name: opensearch
+    hostname: opensearch.docker
+    build:
+      context: containers/opensearch2/
+#    logging:
+#      driver: none # json-file|none|...
+    ports:
+      - 19200:9200
+    volumes:
+      - ./persistent/opensearch2:/usr/share/opensearch/data
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - "ES_JAVA_OPTS=-Xms1012m -Xmx1012m -Dlog4j2.formatMsgNoLookups=true"
+      - "OPENSEARCH_JAVA_OPTS=-Xms1012m -Xmx1012m -Dlog4j2.formatMsgNoLookups=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - search-engine-net
+
+#  opensearch-dashboards:
+#    image: opensearchproject/opensearch-dashboards:2.19.1
+#    container_name: opensearch-dashboards.docker
+#    ports:
+#      - 15601:5601 # Map host port 5601 to container port 5601
+#    expose:
+#      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+#    environment:
+#      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
+#      # Define the OpenSearch nodes that OpenSearch Dashboards will query
+#    networks:
+#      - search-engine-net
+
+networks:
+  search-engine-net:
+    external: true
+  #    name: elastic-net
+  # elastic-net backward compatibility with prev created projects docker-compose.yml
+  # migration to docker-compose ver.3.9 not possible because we require to use external_links at this moment
+  # because we need aliases like 'magento233site-db-1:magento233site.db', 'magento245eepwa.site:magento245ee.backend'
+  elastic-net:
+    external: true
+#    name: elastic-net
+  nginx-proxy:
+    external: true
+  databases:
+    external: true
