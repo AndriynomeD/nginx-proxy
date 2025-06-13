@@ -1,8 +1,8 @@
-version: '2'
+version: '3.9'
 services:
   nginx-proxy:
-    image: nginxproxy/nginx-proxy
     container_name: nginx-proxy
+    image: nginxproxy/nginx-proxy
     ports:
       - 80:80
       - 443:443
@@ -19,10 +19,7 @@ services:
     ports:
       - 8080:80
     environment:
-      PMA_HOSTS: instance1.db,instance_db_2
-    external_links:
-      - instance_db_1:instance1.db
-      - instance_db_2
+      PMA_HOSTS: hostname_db1,hostname_db2
     volumes:
       - ./containers/phpmyadmin/etc/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
     networks:
@@ -49,6 +46,14 @@ services:
       memlock:
         soft: -1
         hard: -1
+#    healthcheck:
+#      test: [
+#        "CMD-SHELL",
+#        "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"' || exit 1"
+#      ]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 12
     networks:
       - elastic-net
       - search-engine-net
@@ -59,14 +64,14 @@ services:
 #    image: docker.elastic.co/kibana/kibana:7.7.1
 #    ports:
 #      - 5601:5601
-#    links:
+#    depends_on:
 #      - elasticsearch
 #    environment:
 #      SERVER_NAME: eskibana
 #      ELASTICSEARCH_URL: http://elasticsearch:9200
 #    networks:
-#      - elastic-net
-#      - search-engine-net
+#     - elastic-net
+#     - search-engine-net
 
   opensearch:
     container_name: opensearch
@@ -91,12 +96,20 @@ services:
       memlock:
         soft: -1
         hard: -1
+#    healthcheck:
+#      test: [
+#        "CMD-SHELL",
+#        "curl -s -u 'admin:admin' -k https://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"' || exit 1"
+#      ]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 12
     networks:
       - search-engine-net
 
 #  opensearch-dashboards:
-#    image: opensearchproject/opensearch-dashboards:2.19.1
 #    container_name: opensearch-dashboards.docker
+#    image: opensearchproject/opensearch-dashboards:2.19.1
 #    ports:
 #      - 15601:5601 # Map host port 5601 to container port 5601
 #    expose:
@@ -111,12 +124,10 @@ networks:
   search-engine-net:
     external: true
   #    name: elastic-net
-  # elastic-net backward compatibility with prev created projects docker-compose.yml
-  # migration to docker-compose ver.3.9 not possible because we require to use external_links at this moment
-  # because we need aliases like 'magento233site-db-1:magento233site.db', 'magento245eepwa.site:magento245ee.backend'
+  # @deprecated
   elastic-net:
     external: true
-#    name: elastic-net
+  #    name: elastic-net
   nginx-proxy:
     external: true
   databases:
